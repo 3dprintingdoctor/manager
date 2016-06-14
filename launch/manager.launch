@@ -1,0 +1,11 @@
+<!-- <!DOCTYPE html> -->
+
+<launch>
+
+  <!-- Launch main node 
+  <node pkg="manager" name="manager_node" type="manager_node" output="screen"/>	-->
+  
+  <include file="$(find openni_launch)/launch/openni.launch"/>
+  <include file="$(find camerakinn)/launch/camerakinn.launch"/>
+
+</launch>
