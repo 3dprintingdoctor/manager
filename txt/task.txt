@@ -1,0 +1,4 @@
+OBJ_SEARCH: Single
+MODEL: /home/users/aleix.ripoll/kinnrec_w/src/camerakinn/models_dataset/Rugby.pcd
+COLORS: 320 100 235
+WORKSPACE: 0.40 0.45 0.25
