@@ -4,11 +4,11 @@ bool srv_obj_rec = true;
 bool srv_points_grasp = false;
 bool srv_ikn = false;
 
-const int maxiter = 100;
-const double err = 1e-4;
-Eigen::Vector3d position;
-Eigen::Vector3d orientation;
-SolverType solverName = KDL_PINV;
+//const int maxiter = 100;
+//const double err = 1e-4;
+//Eigen::Vector3d position;
+//Eigen::Vector3d orientation;
+//IKN::SolverType solverName = IKN::KDL_PINV;
 
 int main(int argc, char **argv)
 {
@@ -26,11 +26,11 @@ int main(int argc, char **argv)
     ros::Rate loop_rate(10);
     double x, y, z, ax, ay, az, theta;
 
-    ros::Publisher joint_pub = nh_.advertise<sensor_msgs::JointState>("/joint_states_2", 1);
-    sensor_msgs::JointState joint_state;
-    IKN::Robot robot0("/home/users/aleix.ripoll/kinnrec_w/src/manager/urdf/UR5.urdf");
-    Eigen::VectorXd q_init(6);
-    Eigen::Matrix4f H_pp;
+   // ros::Publisher joint_pub = nh_.advertise<sensor_msgs::JointState>("/joint_states_2", 1);
+    //sensor_msgs::JointState joint_state;
+   // IKN::Robot robot0("/home/users/aleix.ripoll/kinnrec_w/src/manager/urdf/UR5.urdf");
+    //Eigen::VectorXd q_init(6);
+    //Eigen::Matrix4f H_pp;
 
 
     while (ros::ok()) {
@@ -68,7 +68,7 @@ int main(int argc, char **argv)
               return 1;
             }
         }
-        if(srv_points_grasp){
+       /* if(srv_points_grasp){
             // Grasp module Abiud: objects pose AngleAxis -> |G| -> vector of points(pose)
 
 
@@ -96,7 +96,8 @@ int main(int argc, char **argv)
 
             srv_points_grasp = false;
             srv_ikn = true;
-        }
+            return -1;
+        }*/
 
         //S'ha de determinar la qfinal, ja que el Kautham la necessita per executar els planners(PRM, RRT, human like)
 

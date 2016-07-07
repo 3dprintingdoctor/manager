@@ -7,18 +7,17 @@
   <include file="$(find camerakinn)/launch/camerakinn.launch"/>-->
   
   <node pkg="manager" name="manager_node" type="manager_node" output="screen"/>
-    <!-- urdf xml robot description loaded on the Parameter Server-->
+    <!-- urdf xml robot description loaded on the Parameter Server
   <param name="robot_description" textfile="$(find manager)/urdf/UR5.urdf" />
   
-    <!-- publish all the frames to TF -->
 
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher">
-    <param name="publish_frequency" value="50"/> <!-- Hz -->
+    <param name="publish_frequency" value="50"/> 
     <remap from="joint_states" to="joint_states_2" />
-  </node>
+  </node>-->
   
-      <!-- robot visualization -->
-  <node name="rviz" pkg="rviz" type="rviz" required="true" />  
+      <!-- robot visualization 
+  <node name="rviz" pkg="rviz" type="rviz" required="true" />  -->
 
 </launch>
 
