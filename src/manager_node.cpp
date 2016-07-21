@@ -57,7 +57,7 @@ int main(int argc, char **argv)
                     std::cout<<"Pose object "<<name1<<" : x "<<x<<" y "<<y<<" z "<<z<<std::endl
                             <<" angle "<<theta<<" ax "<<ax<<" ay "<<ay<<" az "<<az<<std::endl;
                     srv_obj_rec = false;
-                    srv_points_grasp = false;
+                    srv_points_grasp = true;
                 }
                 else{
                     std::cout<<" Objects List is empty."<<std::endl;
@@ -97,7 +97,7 @@ int main(int argc, char **argv)
             Grasp->computeContactPoints(object,name,objectPose,sol);
 
             srv_points_grasp = false;
-            srv_ikn = true;
+            //srv_ikn = true;
             return 0;
         }
 
