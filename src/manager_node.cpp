@@ -1,4 +1,5 @@
 #include "manager_node.h"
+#include <pointclouds.h>
 
 bool srv_obj_rec = true;
 bool srv_points_grasp = false;
@@ -56,7 +57,7 @@ int main(int argc, char **argv)
                     std::cout<<"Pose object "<<name1<<" : x "<<x<<" y "<<y<<" z "<<z<<std::endl
                             <<" angle "<<theta<<" ax "<<ax<<" ay "<<ay<<" az "<<az<<std::endl;
                     srv_obj_rec = false;
-                    srv_points_grasp = true;
+                    srv_points_grasp = false;
                 }
                 else{
                     std::cout<<" Objects List is empty."<<std::endl;
@@ -68,41 +69,41 @@ int main(int argc, char **argv)
               return 1;
             }
         }
-       /* if(srv_points_grasp){
+        if(srv_points_grasp){
             // Grasp module Abiud: objects pose AngleAxis -> |G| -> vector of points(pose)
 
+            //inputs:
+
+            pcl::PointCloud<pcl::PointXYZ>::Ptr object (new pcl::PointCloud<pcl::PointXYZ>);
+            pcl::io::loadPCDFile<pcl::PointXYZ>("/home/users/aleix.ripoll/kinnrec_w/src/camera_sens/models_dataset/Rugby2.pcd", *object);
+
+            std::string name = "Rugby.";
+            std::vector<float> objectPose(7);
+            objectPose.at(0)=x;
+            objectPose.at(1)=y;
+            objectPose.at(2)=z;
+            objectPose.at(3)=ax;
+            objectPose.at(4)=ay;
+            objectPose.at(5)=az;
+            objectPose.at(6)=theta;
+            bool sol = true;
+
+            //Call lib
 
 
-            //Output for example
-            Eigen::Vector3f vec1(ax,ay,az);
-            Eigen::Vector3f vec2(x,y,z);
-            Eigen::AngleAxisf aa(theta,vec1);
-            Eigen::Translation3f tr(vec2);
+            GA2H *Grasp;
+            Grasp = new GA2H();
 
-            Eigen::Affine3f rot(aa);
-            Eigen::Affine3f trans(tr);
-            Eigen::Affine3f H_point = trans*rot;
-
-            H_pp = H_point.matrix();
-
-            position(0) = x;
-            position(1) = y;
-            position(2) = z;
-            orientation(0) = atan2(H_pp(2,1), H_pp(2,2)); //roll
-            orientation(1) = atan2(-H_pp(2,0),sqrt(pow(H_pp(2,1),2)+pow(H_pp(2,2),2))); //pitch
-            orientation(2) = atan2(H_pp(1,0),H_pp(0,0)); //yaw
-
-
+            Grasp->computeContactPoints(object,name,objectPose,sol);
 
             srv_points_grasp = false;
             srv_ikn = true;
-            return -1;
-        }*/
+            return 0;
+        }
+
+
 
         //S'ha de determinar la qfinal, ja que el Kautham la necessita per executar els planners(PRM, RRT, human like)
-
-
-
         /*if(srv_ikn){
             std::cout<<"position: "<<position(0)<<" "<<position(1)<<" "<<position(2)<<std::endl;
             std::cout<<"orientation: "<<orientation(0)<<" "<<orientation(1)<<" "<<orientation(2)<<std::endl;
@@ -159,13 +160,9 @@ int main(int argc, char **argv)
 
         }*/
 
-
-
-
-        ros::spinOnce();
+       ros::spinOnce();
        loop_rate.sleep();
     }
-
     return 0;
 }
 

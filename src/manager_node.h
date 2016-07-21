@@ -10,6 +10,9 @@
 #include <Eigen/Geometry>
 #include "ik_functions.h"
 
+
+
+
 //ROS
 #include <ros/ros.h>
 #include <ros/package.h>
@@ -21,6 +24,10 @@
 #include <manager_rec_msgs/rec_Object.h>
 #include <manager_rec_msgs/vector_Objects.h>
 #include <manager_rec_msgs/objectsRecognition.h>
+
+#include <pcl/io/pcd_io.h>
+#include <pcl/common/transforms.h>
+
 
 #endif
 
