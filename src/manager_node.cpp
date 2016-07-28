@@ -57,7 +57,7 @@ int main(int argc, char **argv)
                     std::cout<<"Pose object "<<name1<<" : x "<<x<<" y "<<y<<" z "<<z<<std::endl
                             <<" angle "<<theta<<" ax "<<ax<<" ay "<<ay<<" az "<<az<<std::endl;
                     srv_obj_rec = false;
-                    srv_points_grasp = true;
+                    srv_points_grasp = false;
                 }
                 else{
                     std::cout<<" Objects List is empty."<<std::endl;
@@ -75,7 +75,7 @@ int main(int argc, char **argv)
             //inputs:
 
             pcl::PointCloud<pcl::PointXYZ>::Ptr object (new pcl::PointCloud<pcl::PointXYZ>);
-            pcl::io::loadPCDFile<pcl::PointXYZ>("/home/users/aleix.ripoll/kinnrec_w/src/camera_sens/models_dataset/Rugby2.pcd", *object);
+            pcl::io::loadPCDFile<pcl::PointXYZ>("/home/users/aleix.ripoll/kinnrec_w/src/camera_sens/models_dataset/Rugby.pcd", *object);
 
             std::string name = "Rugby.";
             std::vector<float> objectPose(7);

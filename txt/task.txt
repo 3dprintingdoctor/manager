@@ -1,4 +1,4 @@
 OBJ_SEARCH: Single
-MODEL: /home/users/aleix.ripoll/kinnrec_w/src/camera_sens/models_dataset/Rugby2c.pcd
-COLORS: 320 100
+MODEL: /home/users/aleix.ripoll/kinnrec_w/src/camera_sens/models_dataset/Skate.pcd
+COLORS: 350
 WORKSPACE: 0.4 0.4 0.5
