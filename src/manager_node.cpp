@@ -31,8 +31,8 @@ int main(int argc, char **argv)
     double x_real = 0.0;
     double y_real = 0.0;
     double z_real = 0.165;
-    double ax_real = 1.0;
-    double ay_real = 0.0;
+    double ax_real = 0.0;
+    double ay_real = 1.0;
     double az_real = 0.0;
     double theta_real = M_PI_2;
 
