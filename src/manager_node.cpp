@@ -3,13 +3,14 @@
 
 bool srv_obj_rec = true;
 bool srv_points_grasp = false;
-bool srv_ikn = false;
 
-//const int maxiter = 100;
-//const double err = 1e-4;
-//Eigen::Vector3d position;
-//Eigen::Vector3d orientation;
-//IKN::SolverType solverName = IKN::KDL_PINV;
+double sol_int0 = 0.0;
+double total_s = 100;
+
+float total_time0 = 0.;
+
+ros::Time t_init;
+ros::Time t_curr;
 
 int main(int argc, char **argv)
 {
@@ -27,22 +28,64 @@ int main(int argc, char **argv)
     ros::Rate loop_rate(10);
     double x, y, z, ax, ay, az, theta;
 
-   // ros::Publisher joint_pub = nh_.advertise<sensor_msgs::JointState>("/joint_states_2", 1);
-    //sensor_msgs::JointState joint_state;
-   // IKN::Robot robot0("/home/users/aleix.ripoll/kinnrec_w/src/manager/urdf/UR5.urdf");
-    //Eigen::VectorXd q_init(6);
-    //Eigen::Matrix4f H_pp;
+    double x_real = 0.0;
+    double y_real = 0.0;
+    double z_real = 0.165;
+    double ax_real = 1.0;
+    double ay_real = 0.0;
+    double az_real = 0.0;
+    double theta_real = M_PI_2;
 
+    double De_x;
+    double De_y;
+    double De_z;
+    double De_ax;
+    double De_ay;
+    double De_az;
+    double De_theta;
+
+    std::ofstream myfile;
+    myfile.open ("/home/users/aleix.ripoll/tests_object_recognition/x_estimated.txt");
+    std::ofstream myfile2;
+    myfile2.open ("/home/users/aleix.ripoll/tests_object_recognition/x_error.txt");
+    std::ofstream myfile3;
+    myfile3.open ("/home/users/aleix.ripoll/tests_object_recognition/y_estimated.txt");
+    std::ofstream myfile4;
+    myfile4.open ("/home/users/aleix.ripoll/tests_object_recognition/y_error.txt");
+    std::ofstream myfile5;
+    myfile5.open ("/home/users/aleix.ripoll/tests_object_recognition/z_estimated.txt");
+    std::ofstream myfile6;
+    myfile6.open ("/home/users/aleix.ripoll/tests_object_recognition/z_error.txt");
+    std::ofstream myfile7;
+    myfile7.open ("/home/users/aleix.ripoll/tests_object_recognition/ax_estimated.txt");
+    std::ofstream myfile8;
+    myfile8.open ("/home/users/aleix.ripoll/tests_object_recognition/ax_error.txt");
+    std::ofstream myfile9;
+    myfile9.open ("/home/users/aleix.ripoll/tests_object_recognition/ay_estimated.txt");
+    std::ofstream myfile10;
+    myfile10.open ("/home/users/aleix.ripoll/tests_object_recognition/ay_error.txt");
+    std::ofstream myfile11;
+    myfile11.open ("/home/users/aleix.ripoll/tests_object_recognition/az_estimated.txt");
+    std::ofstream myfile12;
+    myfile12.open ("/home/users/aleix.ripoll/tests_object_recognition/az_error.txt");
+    std::ofstream myfile13;
+    myfile13.open ("/home/users/aleix.ripoll/tests_object_recognition/theta_estimated.txt");
+    std::ofstream myfile14;
+    myfile14.open ("/home/users/aleix.ripoll/tests_object_recognition/theta_error.txt");
 
     while (ros::ok()) {
 
         if(srv_obj_rec)
         {
+
+            t_init = ros::Time::now();
             if (client.call(srv))
             {
                 if(!srv.response.objectsList.vector_objects.empty())
                 {
-
+                    t_curr = ros::Time::now();
+                    ros::Duration dt= t_curr - t_init;
+                    total_time0 += dt.toSec();
                     std::string name1=srv.response.objectsList.vector_name;
                     for(unsigned int c=0; c<srv.response.objectsList.vector_len; ++c){
                          x = srv.response.objectsList.vector_objects.at(c).TemplatePose.x;
@@ -52,12 +95,12 @@ int main(int argc, char **argv)
                          ay = srv.response.objectsList.vector_objects.at(c).TemplatePose.ay;
                          az = srv.response.objectsList.vector_objects.at(c).TemplatePose.az;
                          theta = srv.response.objectsList.vector_objects.at(c).TemplatePose.theta;
-                    }
 
-                    std::cout<<"Pose object "<<name1<<" : x "<<x<<" y "<<y<<" z "<<z<<std::endl
-                            <<" angle "<<theta<<" ax "<<ax<<" ay "<<ay<<" az "<<az<<std::endl;
-                    srv_obj_rec = false;
-                    srv_points_grasp = false;
+                    }
+//                    std::cout<<"Pose object "<<name1<<" : x "<<x<<" y "<<y<<" z "<<z<<std::endl
+//                            <<" angle "<<theta<<" ax "<<ax<<" ay "<<ay<<" az "<<az<<std::endl;
+//                    //srv_obj_rec = false;
+//                    srv_points_grasp = false;
                 }
                 else{
                     std::cout<<" Objects List is empty."<<std::endl;
@@ -67,13 +110,58 @@ int main(int argc, char **argv)
             {
               ROS_ERROR("Failed to call service objects_recognition");
               return 1;
+            }  
+
+            De_x = x - x_real;
+            De_y = y - y_real;
+            De_z = z - z_real;
+            De_ax = ax - ax_real;
+            De_ay = ay - ay_real;
+            De_az = az - az_real;
+            De_theta = theta - theta_real;
+
+            myfile << x <<",";
+            myfile2 << De_x <<",";
+            myfile3 << y <<",";
+            myfile4 << De_y <<",";
+            myfile5 << z <<",";
+            myfile6 << De_z <<",";
+            myfile7 << ax <<",";
+            myfile8 << De_ax <<",";
+            myfile9 << ay <<",";
+            myfile10 << De_ay <<",";
+            myfile11 << az <<",";
+            myfile12 << De_az <<",";
+            myfile13 << theta <<",";
+            myfile14 << De_theta <<",";
+
+            ++sol_int0;
+
+
+            if(sol_int0 == total_s){
+                srv_obj_rec = false;
+                std::cout<<" -> Average time (s): "<<(total_time0/total_s)<<std::endl;
+                myfile.close();
+                myfile2.close();
+                myfile3.close();
+                myfile4.close();
+                myfile5.close();
+                myfile6.close();
+                myfile7.close();
+                myfile8.close();
+                myfile9.close();
+                myfile10.close();
+                myfile11.close();
+                myfile12.close();
+                myfile13.close();
+                myfile14.close();
             }
+
         }
         if(srv_points_grasp){
             // Grasp module Abiud: objects pose AngleAxis -> |G| -> vector of points(pose)
 
             //inputs:
-
             pcl::PointCloud<pcl::PointXYZ>::Ptr object (new pcl::PointCloud<pcl::PointXYZ>);
             pcl::io::loadPCDFile<pcl::PointXYZ>("/home/users/aleix.ripoll/kinnrec_w/src/camera_sens/models_dataset/Rugby.pcd", *object);
 
@@ -95,70 +183,11 @@ int main(int argc, char **argv)
             Grasp = new GA2H();
 
             Grasp->computeContactPoints(object,name,objectPose,sol);
-
             srv_points_grasp = false;
-            //srv_ikn = true;
             return 0;
         }
 
-
-
         //S'ha de determinar la qfinal, ja que el Kautham la necessita per executar els planners(PRM, RRT, human like)
-        /*if(srv_ikn){
-            std::cout<<"position: "<<position(0)<<" "<<position(1)<<" "<<position(2)<<std::endl;
-            std::cout<<"orientation: "<<orientation(0)<<" "<<orientation(1)<<" "<<orientation(2)<<std::endl;
-
-
-            Eigen::VectorXd Q;
-            double curr_error;
-            q_init(0)=0.0;
-            q_init(1)=0.0;
-            q_init(2)=0.0;
-            q_init(3)=0.0;
-            q_init(4)=0.0;
-            q_init(5)=0.0;
-
-            Q = robot0.inverse_kinematics(q_init, position, orientation, solverName, maxiter, err, curr_error);
-
-            if(solverName == 0){
-                std::cout<< "Solver: KDL PINV"<<std::endl;
-            }
-            else if(solverName == 1){
-                std::cout<< "Solver: OWN JACOBIAN PINV"<<std::endl;
-            }
-            else if (solverName == 2){
-                std::cout<< "Solver: OWN JACOBIAN TRANSPOSE"<<std::endl;
-            }
-            else if(solverName == 3){
-                std::cout<< "Solver: OWN JACOBIAN DLS"<<std::endl;
-            }
-
-            std::cout << "Q : "<<std::endl
-                      <<Q<<std::endl;
-            std::cout << "Current Error : "<<curr_error<<std::endl;
-
-            if(Q.size()>0)
-            {
-                joint_state.header.stamp = ros::Time::now();
-
-                joint_state.name.resize(robot0.JointsName.size()); //sorted by name
-                joint_state.name[0] = robot0.JointsName.at(2); //"ShoulderPanJoint"
-                joint_state.name[1] = robot0.JointsName.at(1); //"ShoulderLiftJoint"
-                joint_state.name[2] = robot0.JointsName.at(0); //"ElbowJoint"
-                joint_state.name[3] = robot0.JointsName.at(3); //"Wrist1Joint";
-                joint_state.name[4] = robot0.JointsName.at(4); //"Wrist2Joint";
-                joint_state.name[5] = robot0.JointsName.at(5); //"Wrist3Joint";
-
-
-                joint_state.position.resize(Q.size());
-                for(unsigned int k=0; k<Q.size(); ++k){
-                    joint_state.position[k] = Q(k);
-                }
-
-                joint_pub.publish(joint_state);
-            }
-
-        }*/
 
        ros::spinOnce();
        loop_rate.sleep();
